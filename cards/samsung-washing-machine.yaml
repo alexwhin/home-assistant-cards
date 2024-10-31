@@ -1,0 +1,125 @@
+type: custom:button-card
+name: Samsung Washing Machine
+icon: mdi:washing-machine
+size: 35px
+show_icon: true
+show_name: false
+show_state: false
+entity: switch.washing_machine
+tap_action:
+  action: more-info
+state:
+  - value: "on"
+    color: var(--mdc-theme-primary)
+  - value: "off"
+    color: var(--secondary-text-color)
+custom_fields:
+  animated_wave: |
+    [[[
+      const jobState = states['sensor.washing_machine_washer_job_state']?.state?.toLowerCase() ?? "off";
+      const isRunning = states['switch.washing_machine'].state?.toLowerCase() === "on" && jobState !== "finish";
+      const waveColor = isRunning ? "var(--mdc-theme-primary)" : "var(--secondary-text-color)";
+      const animationDuration = isRunning ? "6s" : "0s";
+
+      return `
+      <svg width="100%" height="45" viewBox="0 0 100 10" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path fill="${waveColor}" opacity="0.7">
+          <animate attributeName="d" dur="${animationDuration}" repeatCount="indefinite"
+            values="
+              M0 8 Q 20 6 40 8 T 100 8 V10 H0 Z;
+              M0 6 Q 20 8 40 6 T 100 6 V10 H0 Z;
+              M0 8 Q 20 5 40 8 T 100 8 V10 H0 Z;
+              M0 6 Q 20 7 40 6 T 100 6 V10 H0 Z;
+              M0 8 Q 20 6 40 8 T 100 8 V10 H0 Z"/>
+        </path>
+        <path fill="${waveColor}" opacity="0.3">
+          <animate attributeName="d" dur="${animationDuration}" repeatCount="indefinite"
+            values="
+              M0 6 Q 15 8 30 6 T 100 6 V10 H0 Z;
+              M0 8 Q 15 5 30 8 T 100 8 V10 H0 Z;
+              M0 6 Q 15 7 30 6 T 100 6 V10 H0 Z;
+              M0 8 Q 15 6 30 8 T 100 8 V10 H0 Z;
+              M0 6 Q 15 8 30 6 T 100 6 V10 H0 Z"/>
+        </path>
+      </svg>
+      `;
+    ]]]
+  job_state: |
+    [[[
+      const machineState = states['switch.washing_machine'].state?.toLowerCase() ?? "off";
+      let jobState = states['sensor.washing_machine_washer_job_state']?.state?.toLowerCase() || "off";
+
+      if (machineState === "on") {
+        jobState = jobState === "none" || jobState === "off" ? "Running" : jobState;
+      } else {
+        switch (jobState) {
+          case "finish":
+            jobState = "Finished";
+            break;
+          case "none":
+          case "off":
+            jobState = "Off";
+            break;
+          default:
+            jobState = jobState.replace(/([A-Z])/g, ' $1').trim();
+            jobState = jobState.charAt(0).toUpperCase() + jobState.slice(1);
+        }
+      }
+      return jobState.charAt(0).toUpperCase() + jobState.slice(1);
+    ]]]
+  completion_time: |
+    [[[
+      const machineState = states['switch.washing_machine'].state?.toLowerCase() ?? "off";
+      const jobState = states['sensor.washing_machine_washer_job_state']?.state?.toLowerCase() || "off";
+      const rawTime = states['sensor.washing_machine_washer_completion_time']?.state;
+      const isRunning = machineState === "on" && jobState !== "finish";
+
+      if (jobState === "finish" && rawTime) {
+        return `Finished at ${new Date(rawTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}`;
+      } else if (jobState === "finish") {
+        return "Finished at (unknown)";
+      } else if (isRunning && rawTime) {
+        return `Will finish at ${new Date(rawTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}`;
+      } else if (isRunning) {
+        return "Will finish at (unknown)";
+      } else {
+        return "Washing Machine";
+      }
+    ]]]
+styles:
+  card:
+    - padding-top: 16px
+    - padding-left: 14px
+    - padding-bottom: 10px
+  name:
+    - font-size: 14px
+    - font-weight: bold
+  label:
+    - font-size: 14px
+    - color: var(--secondary-text-color)
+  grid:
+    - grid-template-areas: |
+        "i job_state"
+        "i completion_time"
+        "animated_wave animated_wave"
+    - grid-template-columns: auto 1fr
+  custom_fields:
+    animated_wave:
+      - width: 110%
+      - margin-top: "-5px"
+      - margin-left: "-15px"
+      - margin-bottom: "-16px"
+    job_state:
+      - margin-top: "-4px"
+      - padding-left: 10px
+      - justify-self: start
+      - font-size: 14px
+      - font-weight: 600
+      - color: var(--primary-text-color)
+    completion_time:
+      - padding-left: 10px
+      - padding-top: 1px
+      - justify-self: start
+      - font-size: 13px
+      - font-weight: 6400
+      - color: var(--secondary-text-color)
