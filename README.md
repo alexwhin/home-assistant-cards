@@ -18,9 +18,9 @@ This card brings your washing machine’s status to life with real-time animatio
 
 The following images illustrate the card’s appearance in different states:
 
-| Idle State                                    | Wash State                                      |
-| --------------------------------------------- | ----------------------------------------------- |
-| ![Off State](cards/screenshots/off-state.png) | ![Wash State](cards/screenshots/wash-state.png) |
+| Idle State                                                            | Wash State                                                              |
+| --------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| ![Off State](cards/samsung-washing-machine/screenshots/off-state.png) | ![Wash State](cards/samsung-washing-machine/screenshots/wash-state.png) |
 
 ### Setup Guide
 
@@ -28,4 +28,4 @@ To get started, follow these steps to add the Samsung Animated Washing Machine C
 
 1. **Button Card**: Follow the button card [installation guide](https://github.com/custom-cards/button-card).
 2. **SmartThings**: Connect your Samsung washing machine through the [SmartThings](https://www.home-assistant.io/integrations/smartthings/) integration.
-3. **Custom Card**: Use the YAML configuration stored in [`cards/samsung-washing-machine.yaml`](cards/samsung-washing-machine.yaml).
+3. **Custom Card**: Use the YAML configuration stored in [`cards/samsung-washing-machine.yaml`](cards/samsung-washing-machine/card.yaml).
