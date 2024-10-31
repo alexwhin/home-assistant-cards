@@ -1,0 +1,87 @@
+type: custom:button-card
+name: Ring Alarm
+entity: alarm_control_panel.home_alarm
+icon: mdi:shield-lock
+size: 24px
+show_icon: true
+show_name: true
+show_state: false
+tap_action:
+  action: call-service
+  service: |
+    [[[
+      return entity.state === 'disarmed'
+        ? 'alarm_control_panel.alarm_arm_away'
+        : 'alarm_control_panel.alarm_disarm';
+    ]]]
+  service_data:
+    entity_id: alarm_control_panel.home_alarm
+state:
+  - value: disarmed
+    color: var(--label-badge-green)
+    icon: mdi:shield-check
+  - value: armed_home
+    color: var(--label-badge-green)
+    icon: mdi:shield-home
+  - value: armed_away
+    color: var(--label-badge-red)
+    icon: mdi:shield-lock
+  - value: arming
+    color: var(--primary-color)
+    icon: mdi:shoe-print
+extra_styles: |
+  @keyframes smoothLoading {
+    0% {
+      background-position: 0% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+styles:
+  card:
+    - padding: 12px
+    - padding-bottom: 15px
+  name:
+    - font-size: 14px
+    - font-weight: 500
+    - position: absolute
+    - left: 18px
+    - top: 16px
+  grid:
+    - grid-template-areas: |
+        "name i"
+    - grid-template-columns: 1fr auto
+  custom_fields:
+    footer:
+      - width: 100%
+      - height: 3px
+      - position: absolute
+      - bottom: 0
+      - left: 0
+      - background-color: |
+          [[[
+            if (entity.state === 'disarmed') return 'var(--label-badge-green)';
+            if (entity.state === 'armed_home') return 'var(--label-badge-green)';
+            if (entity.state === 'armed_away') return 'var(--label-badge-red)';
+            return 'transparent';
+          ]]]
+      - background-image: |
+          [[[
+            if (entity.state === 'arming') return 'linear-gradient(to right, transparent, var(--primary-color), transparent)';
+            return 'none';
+          ]]]
+      - background-size: |
+          [[[
+            if (entity.state === 'arming') return '200% 100%';
+            return '100% 100%';
+          ]]]
+      - background-position: 0 0
+      - animation: |
+          [[[
+            if (entity.state === 'arming') return 'smoothLoading 4s linear infinite';
+            return 'none';
+          ]]]
+custom_fields:
+  footer: |
+    [[[ return `<div></div>`; ]]]
